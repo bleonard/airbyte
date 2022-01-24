@@ -5,17 +5,22 @@
 from typing import List
 
 
-def compute_col_width(data: List[List[str]], padding: int = 2) -> int:
+def compute_columns_width(data: List[List[str]], padding: int = 2) -> List[int]:
     """Compute column width for display purposes:
     Find largest column size, add a padding of two characters.
     Returns:
         data (List[List[str]]): Tabular data containing rows and columns.
         padding (int): Number of character to adds to create space between columns.
     Returns:
-        col_width (int): The computed column width according to input data.
+        columns_width (List[int]): The computed columns widths for each column according to input data.
     """
-    col_width = max(len(col) for row in data for col in row) + padding
-    return col_width
+    columns_width = [0 for _ in data[0]]
+    for row in data:
+        for i, col in enumerate(row):
+            current_col_width = len(col) + padding
+            if current_col_width > columns_width[i]:
+                columns_width[i] = current_col_width
+    return columns_width
 
 
 def camelcased_to_uppercased_spaced(camelcased: str) -> str:
@@ -37,8 +42,8 @@ def display_as_table(data: List[List[str]]) -> str:
     Returns:
         table (str): String representation of input tabular data.
     """
-    col_width = compute_col_width(data)
-    table = "\n".join(["".join(col.ljust(col_width) for col in row) for row in data])
+    columns_width = compute_columns_width(data)
+    table = "\n".join(["".join(col.ljust(columns_width[i]) for i, col in enumerate(row)) for row in data])
     return table
 
 
